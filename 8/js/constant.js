@@ -1,0 +1,5 @@
+const PHOTO_ARRAY_COUNT = 25;
+
+const START_ID = 0;
+
+export {PHOTO_ARRAY_COUNT, START_ID};
