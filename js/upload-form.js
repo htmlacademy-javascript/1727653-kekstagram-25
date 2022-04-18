@@ -1,5 +1,5 @@
 import {isEscapeKey, showUploadMessage} from './utils.js';
-import {FILE_EXTENSIONS, UploadStatusMessage, EffectClassName, EffectName, SliderHeatEffect, SliderPhobosEffect, SliderMarvinEffect, SliderSepiaEffect,
+import {SubmitUploadFormButtonText, FILE_EXTENSIONS, UploadStatusMessage, EffectClassName, EffectName, SliderHeatEffect, SliderPhobosEffect, SliderMarvinEffect, SliderSepiaEffect,
   SliderChromeEffect, SliderDefaultEffect, ErrorMessage, MAX_HASHTAG_COUNT, ZoomRange, DESCRIPTION_LENGTH_FIELD, ZoomControlButtonClass, HASHTAG_MASK} from './constant.js';
 import {sendData} from './api.js';
 const uploadForm = document.querySelector('#upload-select-image');
@@ -59,13 +59,13 @@ const cleanText = (text) => {
 //Блокируем кнопку отправить
 const blockSubmitButton = () => {
   submitButton.disabled = true;
-  submitButton.textContent = 'Отправка...';
+  submitButton.textContent = SubmitUploadFormButtonText.WAIT;
 };
 
 //Разблокируем кнопку отправить
 const unblockSubmitButton = () => {
   submitButton.disabled = false;
-  submitButton.textContent = 'Отправить';
+  submitButton.textContent = SubmitUploadFormButtonText.SEND;
 };
 
 //Обработчик события нажатия на кнопку отправить
@@ -105,10 +105,10 @@ const validateHashtagsCount = (hashtags) => hashtags.length <= MAX_HASHTAG_COUNT
 
 //Проверяем массив хештегов на дубликаты
 const validateNoDuplicateItem = (hashtags) => {
-  const hashtagsList = hashtags.slice().sort();
+  const listHashtags = hashtags.slice().sort();
 
-  for (let i = 0; i < hashtagsList.length; i++) {
-    if (hashtagsList[i] === hashtagsList[i + 1]) {
+  for (let i = 0; i < listHashtags.length; i++) {
+    if (listHashtags[i] === listHashtags[i + 1]) {
       return false;
     }
   }
@@ -118,11 +118,7 @@ const validateNoDuplicateItem = (hashtags) => {
 //Проверяем поле description на длинну
 const validateDescriptionLength = () => {
   const description = descriptionField.value.length;
-  if (description <= DESCRIPTION_LENGTH_FIELD) {
-    return true;
-  } else {
-    return false;
-  }
+  return description <= DESCRIPTION_LENGTH_FIELD;
 };
 
 //Проверяем хештеги
