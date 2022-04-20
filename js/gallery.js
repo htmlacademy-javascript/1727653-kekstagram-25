@@ -25,34 +25,21 @@ const onGalleryPictureClick = (evt) =>{
 };
 
 //Создаем и изменяем параметры HTML фотографии
-const createPictureElement = (id, url, description, likes, comments) => {
-  const picture = pictureTemplate.cloneNode(true);
-  picture.querySelector('.picture__img').id = id;
-  picture.querySelector('.picture__img').src = url;
-  picture.querySelector('.picture__img').alt = description;
-  picture.querySelector('.picture__likes').textContent = likes;
-  picture.querySelector('.picture__comments').textContent = comments.length;
-  return picture;
-};
-
-//Создаем галерею и навешиваем обработчик через делегирование на открытиебольшой картинки
-const createGallery = (pictures) => {
-  serverPhotos = pictures.slice();
-  photos = pictures.slice();
+const createPictureElements = (pictures) => {
   pictures.forEach(({id, url, description, likes, comments}) => {
-    const pictureElement = createPictureElement(id, url, description, likes, comments);
-    picturesListFragment.appendChild(pictureElement);
+    const picture = pictureTemplate.cloneNode(true);
+    picture.querySelector('.picture__img').id = id;
+    picture.querySelector('.picture__img').src = url;
+    picture.querySelector('.picture__img').alt = description;
+    picture.querySelector('.picture__likes').textContent = likes;
+    picture.querySelector('.picture__comments').textContent = comments.length;
+    picturesListFragment.appendChild(picture);
   });
-  picturesList.appendChild(picturesListFragment);
-  picturesList.addEventListener('click', onGalleryPictureClick);
 };
 
 //Создаем фильтрованную галерею
 const createFilteredGallery = (pictures) => {
-  pictures.forEach(({id, url, description, likes, comments}) => {
-    const pictureElement = createPictureElement(id, url, description, likes, comments);
-    picturesListFragment.appendChild(pictureElement);
-  });
+  createPictureElements(pictures);
   picturesList.appendChild(picturesListFragment);
 };
 
@@ -132,10 +119,10 @@ const onCommentsPreviewsButtonClick = (evt) => {
   createFilteredGallery(pictures);
 };
 
+
 //Активируем фильтры
 const addFiltersListeners = () => {
   previewFilterElement.classList.remove('img-filters--inactive');
-
   defaultPreviewFilter.addEventListener('click', debounce(
     onDefaultFilterButtonClick,
     RENDER_DELAY,
@@ -150,4 +137,14 @@ const addFiltersListeners = () => {
   ));
 };
 
-export {createGallery, addFiltersListeners};
+//Создаем галерею и навешиваем обработчик через делегирование на открытиебольшой картинки
+const createGallery = (pictures) => {
+  serverPhotos = pictures.slice();
+  photos = pictures.slice();
+  createPictureElements(pictures);
+  picturesList.appendChild(picturesListFragment);
+  picturesList.addEventListener('click', onGalleryPictureClick);
+  addFiltersListeners();
+};
+
+export {createGallery};

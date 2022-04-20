@@ -47,6 +47,7 @@ const formValidation = new Pristine(uploadForm, {
   errorTextClass: 'img-upload__error-text',
 });
 
+
 //Предварительно подготавливаем массив с хештегами
 const cleanText = (text) => {
   text = text.toLowerCase().trim();
@@ -371,8 +372,9 @@ function closeForm () {
   scaleValue.value = `${ZoomRange.DEFAULT}%`;
   imgPreviewPhoto.className = '';
   imgPreviewPhoto.style.transform = `scale(${ZoomRange.DEFAULT/100})`;
-  imgPreviewPhoto.style.filter = EffectClassName.NONE;
+  imgPreviewPhoto.style.filter = 'none';
   sliderValueInput.value = '';
+  unblockSubmitButton();
   effectNoneInput.checked = true;
   closeButton.removeEventListener('click', onCloseButtonClick);
   uploadForm.removeEventListener('submit', onSubmitForm);
@@ -383,17 +385,21 @@ function closeForm () {
   formValidation.reset();
 }
 
+formValidation.addValidator(hashtagsField, validateHashtags, ErrorMessage.HASHTAG_VALIDATION);
+formValidation.addValidator(descriptionField, validateDescriptionLength, ErrorMessage.DESCRIPTION_LENGTH);
+
 //Открываем форму загрузки изображения
 const onUploadFormChange = () => {
   showPhotoPreview();
+  imgPreviewPhoto.className = '';
+  imgPreviewPhoto.style.transform = `scale(${ZoomRange.DEFAULT/100})`;
+  imgPreviewPhoto.style.filter = 'none';
   uploadFormOverlay.classList.remove('hidden');
   closeButton.addEventListener('click', onCloseButtonClick);
   uploadForm.addEventListener('submit', onSubmitForm);
   document.addEventListener('keydown', onFormEscKeydown);
   scaleBlock.addEventListener('click', onZoomControlButtonClick);
   body.classList.add('modal-open');
-  formValidation.addValidator(hashtagsField, validateHashtags, ErrorMessage.HASHTAG_VALIDATION);
-  formValidation.addValidator(descriptionField, validateDescriptionLength, ErrorMessage.DESCRIPTION_LENGTH);
   effectsList.addEventListener('change', onUpdateEffect);
 
   if (!slider.noUiSlider) {
@@ -401,4 +407,10 @@ const onUploadFormChange = () => {
   }
 };
 
-export {onUploadFormChange};
+//Навешиваем событие на кнопку открытия формы
+
+const addFormOpenButtonHandler = () => {
+  uploadFile.addEventListener('change', onUploadFormChange);
+};
+
+export {addFormOpenButtonHandler};
